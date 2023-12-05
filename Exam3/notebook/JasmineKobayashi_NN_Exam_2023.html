@@ -46,7 +46,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#the-overall-goals-here-include" id="toc-the-overall-goals-here-include" class="nav-link active" data-scroll-target="#the-overall-goals-here-include">The overall goals here include:</a></li>
+  <li><a href="#part-3-applying-neural-nets-ann-cnn-lstm-to-real-labeled-text-data" id="toc-part-3-applying-neural-nets-ann-cnn-lstm-to-real-labeled-text-data" class="nav-link active" data-scroll-target="#part-3-applying-neural-nets-ann-cnn-lstm-to-real-labeled-text-data">Part 3: Applying Neural Nets (ANN, CNN, LSTM) to real labeled text data</a>
+  <ul class="collapse">
+  <li><a href="#the-overall-goals-here-include" id="toc-the-overall-goals-here-include" class="nav-link" data-scroll-target="#the-overall-goals-here-include">The overall goals here include:</a></li>
+  <li><a href="#specific-requirements" id="toc-specific-requirements" class="nav-link" data-scroll-target="#specific-requirements">Specific requirements:</a></li>
+  </ul></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#ann" id="toc-ann" class="nav-link" data-scroll-target="#ann">ANN</a></li>
+  <li><a href="#cnn" id="toc-cnn" class="nav-link" data-scroll-target="#cnn">CNN</a></li>
+  <li><a href="#lstm" id="toc-lstm" class="nav-link" data-scroll-target="#lstm">LSTM</a></li>
   </ul>
 </nav>
 </div>
@@ -75,7 +83,8 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Part 3: Applying Neural Nets (ANN, CNN, LSTM) to real labeled text data</p>
+<section id="part-3-applying-neural-nets-ann-cnn-lstm-to-real-labeled-text-data" class="level1">
+<h1>Part 3: Applying Neural Nets (ANN, CNN, LSTM) to real labeled text data</h1>
 <p>For this part of the Exam, I have gathered articles on three topics: <em>football</em>, <em>science</em>, and <em>politics</em>. The data has already been cleaned, tokenized, and vectorized. Each row (vector) in the dataset is an article, each row is labeled as <em>football</em>, <em>science</em>, and <em>politics</em>. Each column is a word in the vocabulary. The data itself represents the number of times each word appear in that given article. (The data was gathered from <a href="https://newsapi.org/">newsapi.org</a>).</p>
 <p><strong>Here is a link to the cleaned, prepared, labeled data.</strong></p>
 <p><a href="https://drive.google.com/file/d/1-ZAbxWN29iCo44kaLSfYmV2E8YDKcgGE/view?usp=sharing" class="uri">https://drive.google.com/file/d/1-ZAbxWN29iCo44kaLSfYmV2E8YDKcgGE/view?usp=sharing</a></p>
@@ -91,7 +100,9 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>It is up to you how to do this and how best to illustrate and explain your steps, results, and conclusions. Assume the reader is non-technical.</strong></li>
 <li>You will include a <strong>link</strong> to your code, but do not paste or otherwise include code on the Exam document. (Again, you can place your code wherever you want as long as there is a link to it).</li>
 </ol>
-<p><strong>Specific requirements:</strong></p>
+</section>
+<section id="specific-requirements" class="level2">
+<h2 class="anchored" data-anchor-id="specific-requirements">Specific requirements:</h2>
 <p>There are many ways to do this. The following offeres a few core requirements. Beyond this, <strong>YOU must decide what to do and how best to do it.</strong> Part of your grade will be based on your flow, discussion, illustrations, report, and communication of methods and results. Again, you will post a link to the code, but you will not include or paste code in the word doc.</p>
 <ol type="1">
 <li><p>Use Python and TF/Keras to Train and then Test the accuracy for an ANN, CNN, and LSTM RNN. In other words, you will use three different Neural Networks to create models that should predict whether a test vector (which represents an article on a topic) is on the topic of <em>science</em>, <em>football</em>, or <em>politics</em>. You will need to write code to do this. You already have code for ANNs, CNNs, and LSTM RNNs, so you may choose to repurpose/update your code as needed.</p></li>
@@ -106,6 +117,19 @@ ul.task-list li input[type="checkbox"] {
 </ol></li>
 </ol>
 <hr>
+</section>
+</section>
+<section id="data" class="level1">
+<h1>Data</h1>
+</section>
+<section id="ann" class="level1">
+<h1>ANN</h1>
+</section>
+<section id="cnn" class="level1">
+<h1>CNN</h1>
+</section>
+<section id="lstm" class="level1">
+<h1>LSTM</h1>
 </section>
 
 </main>
