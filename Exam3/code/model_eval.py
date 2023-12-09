@@ -67,4 +67,27 @@ class exam_model_eval:
                                          epochs = epochs,
                                          validation_data =(self.X_test,self.y_test))
 
+    def accuracy_plot(self,
+                      title = "Accuracy over all Epochs"):
+        # Accuracy plot
+        plt.plot(self.hist.history['categorical_accuracy'], label='accuracy')
+        plt.plot(self.hist.history['val_categorical_accuracy'], label = 'val_accuracy')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy')
+        plt.title(title)
+
+        #plt.ylim([0.5, 1])
+        plt.legend(loc='lower right')
+        plt.show()
+
+    def loss_plot(self,
+                  title = "Loss over all epochs"):
+        # Loss plot
+        plt.plot(self.hist.history['loss'], label='loss')
+        plt.plot(self.hist.history['val_loss'], label = 'val_loss')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.title(title)
+        #plt.ylim([0.5, 1])
+        plt.legend(loc='lower right')
     
