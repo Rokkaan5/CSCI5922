@@ -94,6 +94,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#one-hot-encoder-to-labels" id="toc-one-hot-encoder-to-labels" class="nav-link" data-scroll-target="#one-hot-encoder-to-labels">One Hot Encoder to Labels</a></li>
   <li><a href="#training-testing-sets" id="toc-training-testing-sets" class="nav-link" data-scroll-target="#training-testing-sets">Training &amp; Testing Sets</a></li>
   </ul></li>
+  <li><a href="#models" id="toc-models" class="nav-link" data-scroll-target="#models">Models</a></li>
   <li><a href="#ann" id="toc-ann" class="nav-link" data-scroll-target="#ann">ANN</a></li>
   <li><a href="#cnn" id="toc-cnn" class="nav-link" data-scroll-target="#cnn">CNN</a></li>
   <li><a href="#lstm" id="toc-lstm" class="nav-link" data-scroll-target="#lstm">LSTM</a></li>
@@ -167,16 +168,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os,sys</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow <span class="im">import</span> keras</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow.keras</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.models <span class="im">import</span> Sequential</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.layers <span class="im">import</span> LSTM, Dense, Dropout, LSTM</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.optimizers <span class="im">import</span> Adam</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2023-12-09 06:50:07.240306: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-12-09 06:50:07.297604: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.</code></pre>
+</div>
 </div>
 <div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% working directory</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>src_file_dir <span class="op">=</span> os.path.abspath(<span class="st">""</span>)          <span class="co"># directory holding this script file</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>src_dir <span class="op">=</span> os.path.dirname(src_file_dir)     <span class="co"># parent directory of above directory</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>os.chdir(src_dir)                           <span class="co"># working directory should now be ".../CSCI5922/Exam3"</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"current working directory:"</span>, os.getcwd())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% working directory</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"current working directory:"</span>, os.getcwd())</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.getcwd()[<span class="op">-</span><span class="dv">15</span>:] <span class="op">!=</span> <span class="st">"/CSCI5922/Exam3"</span>:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    src_file_dir <span class="op">=</span> os.path.abspath(<span class="st">""</span>)          <span class="co"># directory holding this script file</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    src_dir <span class="op">=</span> os.path.dirname(src_file_dir)     <span class="co"># parent directory of above directory</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    os.chdir(src_dir)                           <span class="co"># working directory should now be ".../CSCI5922/Exam3"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"current working directory:"</span>, os.getcwd())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>current working directory: /home/jasminekobayashi/gh_repos/CSCI5922/Exam3</code></pre>
+<pre><code>current working directory: /home/jasminekobayashi/gh_repos/CSCI5922/Exam3/notebook
+current working directory: /home/jasminekobayashi/gh_repos/CSCI5922/Exam3</code></pre>
 </div>
 </div>
 </section>
@@ -184,9 +203,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data" class="level1">
 <h1>Data</h1>
 <div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% load data</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"data/Final_News_DF_Labeled_ExamDataset.csv"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% load data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"data/Final_News_DF_Labeled_ExamDataset.csv"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
@@ -349,13 +368,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="separate-features-targets" class="level2">
 <h2 class="anchored" data-anchor-id="separate-features-targets">Separate Features &amp; Targets</h2>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% features vs. targets (aka: estimators vs. predictors, input vs. output, etc.)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data.drop(columns<span class="op">=</span>[<span class="st">'LABEL'</span>]).to_numpy()     <span class="co"># features: everything except column "LABEL"</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data[[<span class="st">"LABEL"</span>]]                             <span class="co"># targets: column "LABEL"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% features vs. targets (aka: estimators vs. predictors, input vs. output, etc.)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data.drop(columns<span class="op">=</span>[<span class="st">'LABEL'</span>]).to_numpy()     <span class="co"># features: everything except column "LABEL"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data[[<span class="st">"LABEL"</span>]]                             <span class="co"># targets: column "LABEL"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview of X (first 5 rows)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview of X (first 5 rows)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>X[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>array([[0, 0, 0, ..., 0, 0, 0],
        [0, 0, 0, ..., 1, 0, 0],
@@ -365,8 +384,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview of y</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview of y</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
@@ -409,19 +428,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="one-hot-encoder-to-labels" class="level2">
 <h2 class="anchored" data-anchor-id="one-hot-encoder-to-labels">One Hot Encoder to Labels</h2>
 <div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% One Hot encode label</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>OHE <span class="op">=</span> OneHotEncoder()</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> OHE.fit_transform(y).toarray()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/home/jasminekobayashi/anaconda3/lib/python3.11/site-packages/sklearn/utils/validation.py:605: FutureWarning: is_sparse is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.SparseDtype)` instead.
-  if is_sparse(pd_dtype):
-/home/jasminekobayashi/anaconda3/lib/python3.11/site-packages/sklearn/utils/validation.py:614: FutureWarning: is_sparse is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.SparseDtype)` instead.
-  if is_sparse(pd_dtype) or not is_extension_array_dtype(pd_dtype):
-/home/jasminekobayashi/anaconda3/lib/python3.11/site-packages/sklearn/utils/validation.py:605: FutureWarning: is_sparse is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.SparseDtype)` instead.
-  if is_sparse(pd_dtype):
-/home/jasminekobayashi/anaconda3/lib/python3.11/site-packages/sklearn/utils/validation.py:614: FutureWarning: is_sparse is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.SparseDtype)` instead.
-  if is_sparse(pd_dtype) or not is_extension_array_dtype(pd_dtype):</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %% One Hot encode label</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>OHE <span class="op">=</span> OneHotEncoder()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> OHE.fit_transform(y).toarray()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>OHE.categories_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -516,8 +525,425 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
+<section id="models" class="level1">
+<h1>Models</h1>
+<p>There are some portions of the code that could be relatively repetitive, so rather than just constantly copy and pasting cell codes, I created the following class to help with some redundancy.</p>
+<p>The class is built so that after building the model, the desired model to be evaluated is passed into the class when instantiated (and the model summary is outputted during instantiation).</p>
+<p>It contains functions that simplify some repetitive process with parameters to change the small details to give flexibility to change if needed depending on the model. Some function may default to have some useful informative outputs (like what loss function was used, data previews, etc.).</p>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> exam_model_eval:</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>,NN_model,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                 model_name <span class="op">=</span> <span class="st">'NN Model'</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                 X_train<span class="op">=</span>X_train,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                 X_test<span class="op">=</span>X_test,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                 y_train<span class="op">=</span>y_train,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                 y_test<span class="op">=</span>y_test,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                 OHE<span class="op">=</span>OHE):</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.NN_model <span class="op">=</span> NN_model</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model_name <span class="op">=</span> model_name</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.OHE <span class="op">=</span> OHE</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.X_train <span class="op">=</span> X_train</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.X_test <span class="op">=</span> X_test</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.y_train <span class="op">=</span> y_train</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.labeled_y_train <span class="op">=</span> <span class="va">self</span>.OHE.inverse_transform(<span class="va">self</span>.y_train) <span class="co">#likely not needed, but potentially useful</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.y_test <span class="op">=</span> y_test</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.labeled_y_test <span class="op">=</span> <span class="va">self</span>.OHE.inverse_transform(<span class="va">self</span>.y_test)</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print model summary</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="va">self</span>.NN_model.summary())</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> compile_model(<span class="va">self</span>, </span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>                      loss <span class="op">=</span> tf.keras.losses.CategoricalCrossentropy(),</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>                      metrics <span class="op">=</span> keras.metrics.CategoricalAccuracy(),</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>                      optimizer <span class="op">=</span> tf.keras.optimizers.legacy.Adam(learning_rate <span class="op">=</span> <span class="fl">0.001</span>)):</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.NN_model.<span class="bu">compile</span>(loss<span class="op">=</span>loss,</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>                              metrics <span class="op">=</span> metrics,</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>                              optimizer <span class="op">=</span> optimizer)</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Model was compiled (using following parameters):"</span>)</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Loss Function ="</span>,<span class="bu">str</span>(loss))</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Accuracy Metric ="</span>,<span class="bu">str</span>(metrics))</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Optimizer ="</span>,<span class="bu">str</span>(optimizer))</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> train_model(<span class="va">self</span>,epochs <span class="op">=</span> <span class="dv">10</span>):</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.hist <span class="op">=</span> <span class="va">self</span>.NN_model.fit(<span class="va">self</span>.X_train,</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>                                         <span class="va">self</span>.y_train,</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>                                         epochs <span class="op">=</span> epochs,</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>                                         validation_data <span class="op">=</span>(<span class="va">self</span>.X_test,<span class="va">self</span>.y_test))</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> accuracy_plot(<span class="va">self</span>,</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>                      title <span class="op">=</span> <span class="st">"Accuracy over all Epochs"</span>):</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Accuracy plot</span></span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>        plt.plot(<span class="va">self</span>.hist.history[<span class="st">'categorical_accuracy'</span>], label<span class="op">=</span><span class="st">'accuracy'</span>)</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>        plt.plot(<span class="va">self</span>.hist.history[<span class="st">'val_categorical_accuracy'</span>], label <span class="op">=</span> <span class="st">'val_accuracy'</span>)</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>        plt.title(title<span class="op">+</span><span class="st">" for </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(<span class="va">self</span>.model_name))</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>        <span class="co">#plt.ylim([0.5, 1])</span></span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>        plt.legend(loc<span class="op">=</span><span class="st">'lower right'</span>)</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> loss_plot(<span class="va">self</span>,</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a>                  title <span class="op">=</span> <span class="st">"Loss over all epochs"</span>):</span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Loss plot</span></span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a>        plt.plot(<span class="va">self</span>.hist.history[<span class="st">'loss'</span>], label<span class="op">=</span><span class="st">'loss'</span>)</span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a>        plt.plot(<span class="va">self</span>.hist.history[<span class="st">'val_loss'</span>], label <span class="op">=</span> <span class="st">'val_loss'</span>)</span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a>        plt.xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">'Loss'</span>)</span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a>        plt.title(title<span class="op">+</span><span class="st">" for </span><span class="sc">{}</span><span class="st"> "</span>.<span class="bu">format</span>(<span class="va">self</span>.model_name))</span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>        <span class="co">#plt.ylim([0.5, 1])</span></span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a>        plt.legend(loc<span class="op">=</span><span class="st">'lower right'</span>)</span>
+<span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_model(<span class="va">self</span>,verbose<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.prediction <span class="op">=</span> <span class="va">self</span>.NN_model.predict(<span class="va">self</span>.X_test)</span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.labeled_prediction <span class="op">=</span> <span class="va">self</span>.OHE.inverse_transform(<span class="va">self</span>.prediction)</span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.eval_loss,<span class="va">self</span>.eval_acc <span class="op">=</span> <span class="va">self</span>.NN_model.evaluate(<span class="va">self</span>.X_test,<span class="va">self</span>.y_test)</span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> verbose:</span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Model Loss from testing:"</span>)</span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="va">self</span>.eval_loss)</span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Model Accuracy from testing:"</span>)</span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="va">self</span>.eval_acc)</span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Preview of model prediction (raw):"</span>)</span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="va">self</span>.prediction[:<span class="dv">5</span>])</span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Preview of predictions labeled:"</span>)</span>
+<span id="cb28-82"><a href="#cb28-82" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="va">self</span>.labeled_prediction[:<span class="dv">5</span>])</span>
+<span id="cb28-83"><a href="#cb28-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-84"><a href="#cb28-84" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> pretty_confusion_matrix(<span class="va">self</span>,</span>
+<span id="cb28-85"><a href="#cb28-85" aria-hidden="true" tabindex="-1"></a>                                title<span class="op">=</span><span class="st">'Confusion Matrix'</span>):</span>
+<span id="cb28-86"><a href="#cb28-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-87"><a href="#cb28-87" aria-hidden="true" tabindex="-1"></a>        cm <span class="op">=</span> confusion_matrix(<span class="va">self</span>.labeled_prediction,<span class="va">self</span>.labeled_y_test)</span>
+<span id="cb28-88"><a href="#cb28-88" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb28-89"><a href="#cb28-89" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots() </span>
+<span id="cb28-90"><a href="#cb28-90" aria-hidden="true" tabindex="-1"></a>        sns.heatmap(cm, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'g'</span>, ax<span class="op">=</span>ax, annot_kws<span class="op">=</span>{<span class="st">'size'</span>: <span class="dv">18</span>})</span>
+<span id="cb28-91"><a href="#cb28-91" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'True labels'</span>) </span>
+<span id="cb28-92"><a href="#cb28-92" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Predicted labels'</span>)</span>
+<span id="cb28-93"><a href="#cb28-93" aria-hidden="true" tabindex="-1"></a>        ax.xaxis.set_ticklabels(<span class="va">self</span>.OHE.categories_[<span class="dv">0</span>].tolist())</span>
+<span id="cb28-94"><a href="#cb28-94" aria-hidden="true" tabindex="-1"></a>        ax.yaxis.set_ticklabels(<span class="va">self</span>.OHE.categories_[<span class="dv">0</span>].tolist())</span>
+<span id="cb28-95"><a href="#cb28-95" aria-hidden="true" tabindex="-1"></a>        ax.set_title(title<span class="op">+</span><span class="st">" of </span><span class="sc">{}</span><span class="st"> Prediction Performance"</span>.<span class="bu">format</span>(<span class="va">self</span>.model_name)) </span>
+<span id="cb28-96"><a href="#cb28-96" aria-hidden="true" tabindex="-1"></a>        plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2023-12-09 06:50:09.827888: E tensorflow/compiler/xla/stream_executor/cuda/cuda_driver.cc:266] failed call to cuInit: UNKNOWN ERROR (100)</code></pre>
+</div>
+</div>
+</section>
 <section id="ann" class="level1">
 <h1>ANN</h1>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ANN_model <span class="op">=</span> tf.keras.models.Sequential([</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span><span class="st">'relu'</span>), </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  tf.keras.layers.Dense(<span class="dv">16</span>, activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  tf.keras.layers.Dropout(<span class="fl">.5</span>), </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  tf.keras.layers.Dense(<span class="dv">8</span>, activation<span class="op">=</span><span class="st">'relu'</span>),</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  tf.keras.layers.Dropout(<span class="fl">.5</span>), </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  tf.keras.layers.Dense(<span class="dv">3</span>, activation<span class="op">=</span><span class="st">'softmax'</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>ANN_model(X_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="32">
+<pre><code>&lt;tf.Tensor: shape=(1194, 3), dtype=float32, numpy=
+array([[0.33004063, 0.3492546 , 0.32070473],
+       [0.33382037, 0.4372591 , 0.22892053],
+       [0.3417396 , 0.32636344, 0.331897  ],
+       ...,
+       [0.33349174, 0.34902298, 0.31748527],
+       [0.36171305, 0.37936315, 0.25892377],
+       [0.34361306, 0.38707182, 0.26931518]], dtype=float32)&gt;</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>my_ANN <span class="op">=</span> exam_model_eval(ANN_model,model_name<span class="op">=</span><span class="st">"ANN_model"</span>) <span class="co">#the init of this class prints the model summary</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: "sequential_2"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ dense_8 (Dense)             (1194, 32)                9632      
+                                                                 
+ dense_9 (Dense)             (1194, 16)                528       
+                                                                 
+ dropout_2 (Dropout)         (1194, 16)                0         
+                                                                 
+ dense_10 (Dense)            (1194, 8)                 136       
+                                                                 
+ dropout_3 (Dropout)         (1194, 8)                 0         
+                                                                 
+ dense_11 (Dense)            (1194, 3)                 27        
+                                                                 
+=================================================================
+Total params: 10,323
+Trainable params: 10,323
+Non-trainable params: 0
+_________________________________________________________________
+None</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>my_ANN.compile_model()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model was compiled (using following parameters):
+Loss Function = &lt;keras.losses.CategoricalCrossentropy object at 0x7f1ad1346010&gt;
+Accuracy Metric = CategoricalAccuracy(name=categorical_accuracy,dtype=float32)
+Optimizer = &lt;keras.optimizers.legacy.adam.Adam object at 0x7f1ad13a0790&gt;</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>my_ANN.train_model(epochs<span class="op">=</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/100
+38/38 [==============================] - 1s 9ms/step - loss: 1.0609 - categorical_accuracy: 0.4655 - val_loss: 0.9922 - val_categorical_accuracy: 0.5585
+Epoch 2/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.9574 - categorical_accuracy: 0.5226 - val_loss: 0.8271 - val_categorical_accuracy: 0.6856
+Epoch 3/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.8691 - categorical_accuracy: 0.6022 - val_loss: 0.7514 - val_categorical_accuracy: 0.7191
+Epoch 4/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.7985 - categorical_accuracy: 0.6449 - val_loss: 0.7239 - val_categorical_accuracy: 0.7023
+Epoch 5/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.7221 - categorical_accuracy: 0.7018 - val_loss: 0.7160 - val_categorical_accuracy: 0.7258
+Epoch 6/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.7003 - categorical_accuracy: 0.7010 - val_loss: 0.6912 - val_categorical_accuracy: 0.7358
+Epoch 7/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.6687 - categorical_accuracy: 0.7362 - val_loss: 0.6997 - val_categorical_accuracy: 0.7324
+Epoch 8/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.5994 - categorical_accuracy: 0.7705 - val_loss: 0.7051 - val_categorical_accuracy: 0.7425
+Epoch 9/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.6015 - categorical_accuracy: 0.7521 - val_loss: 0.7545 - val_categorical_accuracy: 0.7191
+Epoch 10/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.5722 - categorical_accuracy: 0.7739 - val_loss: 0.7448 - val_categorical_accuracy: 0.7258
+Epoch 11/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.5451 - categorical_accuracy: 0.7956 - val_loss: 0.7844 - val_categorical_accuracy: 0.7224
+Epoch 12/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.5435 - categorical_accuracy: 0.7806 - val_loss: 0.7852 - val_categorical_accuracy: 0.7324
+Epoch 13/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.5467 - categorical_accuracy: 0.7881 - val_loss: 0.7863 - val_categorical_accuracy: 0.7224
+Epoch 14/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.5073 - categorical_accuracy: 0.8149 - val_loss: 0.8595 - val_categorical_accuracy: 0.7358
+Epoch 15/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.5105 - categorical_accuracy: 0.8132 - val_loss: 0.8630 - val_categorical_accuracy: 0.7291
+Epoch 16/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4815 - categorical_accuracy: 0.8208 - val_loss: 0.9094 - val_categorical_accuracy: 0.7358
+Epoch 17/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.4803 - categorical_accuracy: 0.8233 - val_loss: 0.9438 - val_categorical_accuracy: 0.7258
+Epoch 18/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.4479 - categorical_accuracy: 0.8425 - val_loss: 0.9808 - val_categorical_accuracy: 0.7157
+Epoch 19/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.4644 - categorical_accuracy: 0.8241 - val_loss: 0.9853 - val_categorical_accuracy: 0.7191
+Epoch 20/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4860 - categorical_accuracy: 0.8208 - val_loss: 1.0323 - val_categorical_accuracy: 0.7157
+Epoch 21/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.4532 - categorical_accuracy: 0.8308 - val_loss: 1.0694 - val_categorical_accuracy: 0.7258
+Epoch 22/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4426 - categorical_accuracy: 0.8333 - val_loss: 1.1106 - val_categorical_accuracy: 0.7157
+Epoch 23/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.4474 - categorical_accuracy: 0.8258 - val_loss: 1.1252 - val_categorical_accuracy: 0.7124
+Epoch 24/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.4567 - categorical_accuracy: 0.8333 - val_loss: 1.1581 - val_categorical_accuracy: 0.7057
+Epoch 25/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4419 - categorical_accuracy: 0.8325 - val_loss: 1.1681 - val_categorical_accuracy: 0.7157
+Epoch 26/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4283 - categorical_accuracy: 0.8417 - val_loss: 1.2607 - val_categorical_accuracy: 0.7191
+Epoch 27/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4207 - categorical_accuracy: 0.8451 - val_loss: 1.2629 - val_categorical_accuracy: 0.7291
+Epoch 28/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4394 - categorical_accuracy: 0.8266 - val_loss: 1.2707 - val_categorical_accuracy: 0.7258
+Epoch 29/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4305 - categorical_accuracy: 0.8350 - val_loss: 1.2972 - val_categorical_accuracy: 0.7191
+Epoch 30/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4211 - categorical_accuracy: 0.8392 - val_loss: 1.2721 - val_categorical_accuracy: 0.7224
+Epoch 31/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3942 - categorical_accuracy: 0.8526 - val_loss: 1.3503 - val_categorical_accuracy: 0.7191
+Epoch 32/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.4103 - categorical_accuracy: 0.8484 - val_loss: 1.4008 - val_categorical_accuracy: 0.7191
+Epoch 33/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4104 - categorical_accuracy: 0.8392 - val_loss: 1.4071 - val_categorical_accuracy: 0.7191
+Epoch 34/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3947 - categorical_accuracy: 0.8543 - val_loss: 1.4329 - val_categorical_accuracy: 0.7191
+Epoch 35/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3994 - categorical_accuracy: 0.8534 - val_loss: 1.5525 - val_categorical_accuracy: 0.7157
+Epoch 36/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.4024 - categorical_accuracy: 0.8551 - val_loss: 1.4219 - val_categorical_accuracy: 0.7258
+Epoch 37/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3989 - categorical_accuracy: 0.8476 - val_loss: 1.5466 - val_categorical_accuracy: 0.7157
+Epoch 38/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3825 - categorical_accuracy: 0.8618 - val_loss: 1.5630 - val_categorical_accuracy: 0.7191
+Epoch 39/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3888 - categorical_accuracy: 0.8559 - val_loss: 1.6135 - val_categorical_accuracy: 0.7224
+Epoch 40/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3819 - categorical_accuracy: 0.8618 - val_loss: 1.6149 - val_categorical_accuracy: 0.7224
+Epoch 41/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3592 - categorical_accuracy: 0.8710 - val_loss: 1.6996 - val_categorical_accuracy: 0.7258
+Epoch 42/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3962 - categorical_accuracy: 0.8518 - val_loss: 1.7393 - val_categorical_accuracy: 0.7157
+Epoch 43/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3953 - categorical_accuracy: 0.8585 - val_loss: 1.6474 - val_categorical_accuracy: 0.7124
+Epoch 44/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3869 - categorical_accuracy: 0.8601 - val_loss: 1.7402 - val_categorical_accuracy: 0.7090
+Epoch 45/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.3884 - categorical_accuracy: 0.8543 - val_loss: 1.7035 - val_categorical_accuracy: 0.7157
+Epoch 46/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3846 - categorical_accuracy: 0.8618 - val_loss: 1.7722 - val_categorical_accuracy: 0.7191
+Epoch 47/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3532 - categorical_accuracy: 0.8719 - val_loss: 1.7872 - val_categorical_accuracy: 0.7124
+Epoch 48/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3577 - categorical_accuracy: 0.8719 - val_loss: 1.8614 - val_categorical_accuracy: 0.7191
+Epoch 49/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.3803 - categorical_accuracy: 0.8576 - val_loss: 1.8644 - val_categorical_accuracy: 0.7191
+Epoch 50/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.3874 - categorical_accuracy: 0.8551 - val_loss: 1.8726 - val_categorical_accuracy: 0.7157
+Epoch 51/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3724 - categorical_accuracy: 0.8551 - val_loss: 1.9048 - val_categorical_accuracy: 0.7191
+Epoch 52/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3843 - categorical_accuracy: 0.8576 - val_loss: 1.7867 - val_categorical_accuracy: 0.7157
+Epoch 53/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3655 - categorical_accuracy: 0.8685 - val_loss: 1.8015 - val_categorical_accuracy: 0.7191
+Epoch 54/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3652 - categorical_accuracy: 0.8635 - val_loss: 1.7895 - val_categorical_accuracy: 0.7224
+Epoch 55/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3622 - categorical_accuracy: 0.8626 - val_loss: 1.8268 - val_categorical_accuracy: 0.7224
+Epoch 56/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3686 - categorical_accuracy: 0.8652 - val_loss: 1.8488 - val_categorical_accuracy: 0.7258
+Epoch 57/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.3809 - categorical_accuracy: 0.8501 - val_loss: 1.9646 - val_categorical_accuracy: 0.7224
+Epoch 58/100
+38/38 [==============================] - 0s 8ms/step - loss: 0.3679 - categorical_accuracy: 0.8660 - val_loss: 1.9349 - val_categorical_accuracy: 0.7224
+Epoch 59/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3767 - categorical_accuracy: 0.8593 - val_loss: 1.9580 - val_categorical_accuracy: 0.7224
+Epoch 60/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3760 - categorical_accuracy: 0.8509 - val_loss: 1.9810 - val_categorical_accuracy: 0.7191
+Epoch 61/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3667 - categorical_accuracy: 0.8643 - val_loss: 1.9790 - val_categorical_accuracy: 0.7157
+Epoch 62/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3844 - categorical_accuracy: 0.8534 - val_loss: 2.0327 - val_categorical_accuracy: 0.7258
+Epoch 63/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3991 - categorical_accuracy: 0.8409 - val_loss: 2.0184 - val_categorical_accuracy: 0.7291
+Epoch 64/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3633 - categorical_accuracy: 0.8601 - val_loss: 2.0526 - val_categorical_accuracy: 0.7291
+Epoch 65/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3769 - categorical_accuracy: 0.8518 - val_loss: 2.0605 - val_categorical_accuracy: 0.7258
+Epoch 66/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3520 - categorical_accuracy: 0.8660 - val_loss: 2.1389 - val_categorical_accuracy: 0.7157
+Epoch 67/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3514 - categorical_accuracy: 0.8677 - val_loss: 2.1457 - val_categorical_accuracy: 0.7157
+Epoch 68/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3461 - categorical_accuracy: 0.8710 - val_loss: 2.1303 - val_categorical_accuracy: 0.7191
+Epoch 69/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3503 - categorical_accuracy: 0.8685 - val_loss: 2.2293 - val_categorical_accuracy: 0.7224
+Epoch 70/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3427 - categorical_accuracy: 0.8710 - val_loss: 2.2827 - val_categorical_accuracy: 0.7157
+Epoch 71/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3481 - categorical_accuracy: 0.8727 - val_loss: 2.3142 - val_categorical_accuracy: 0.7057
+Epoch 72/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3672 - categorical_accuracy: 0.8601 - val_loss: 2.2090 - val_categorical_accuracy: 0.7258
+Epoch 73/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3455 - categorical_accuracy: 0.8652 - val_loss: 2.2007 - val_categorical_accuracy: 0.7090
+Epoch 74/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3685 - categorical_accuracy: 0.8526 - val_loss: 2.2829 - val_categorical_accuracy: 0.7258
+Epoch 75/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3648 - categorical_accuracy: 0.8543 - val_loss: 2.3144 - val_categorical_accuracy: 0.7191
+Epoch 76/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3572 - categorical_accuracy: 0.8702 - val_loss: 2.2419 - val_categorical_accuracy: 0.7258
+Epoch 77/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3494 - categorical_accuracy: 0.8677 - val_loss: 2.2979 - val_categorical_accuracy: 0.7157
+Epoch 78/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3459 - categorical_accuracy: 0.8677 - val_loss: 2.3242 - val_categorical_accuracy: 0.7157
+Epoch 79/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3565 - categorical_accuracy: 0.8660 - val_loss: 2.3559 - val_categorical_accuracy: 0.7224
+Epoch 80/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3271 - categorical_accuracy: 0.8802 - val_loss: 2.3619 - val_categorical_accuracy: 0.7191
+Epoch 81/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3424 - categorical_accuracy: 0.8744 - val_loss: 2.3159 - val_categorical_accuracy: 0.7258
+Epoch 82/100
+38/38 [==============================] - 0s 4ms/step - loss: 0.3394 - categorical_accuracy: 0.8719 - val_loss: 2.4338 - val_categorical_accuracy: 0.7258
+Epoch 83/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3524 - categorical_accuracy: 0.8643 - val_loss: 2.4549 - val_categorical_accuracy: 0.7191
+Epoch 84/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3349 - categorical_accuracy: 0.8727 - val_loss: 2.4771 - val_categorical_accuracy: 0.7191
+Epoch 85/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3494 - categorical_accuracy: 0.8744 - val_loss: 2.5058 - val_categorical_accuracy: 0.7258
+Epoch 86/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3373 - categorical_accuracy: 0.8744 - val_loss: 2.5574 - val_categorical_accuracy: 0.7224
+Epoch 87/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3258 - categorical_accuracy: 0.8819 - val_loss: 2.5905 - val_categorical_accuracy: 0.7191
+Epoch 88/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3436 - categorical_accuracy: 0.8727 - val_loss: 2.5652 - val_categorical_accuracy: 0.7224
+Epoch 89/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3245 - categorical_accuracy: 0.8819 - val_loss: 2.5545 - val_categorical_accuracy: 0.7258
+Epoch 90/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3126 - categorical_accuracy: 0.8894 - val_loss: 2.6246 - val_categorical_accuracy: 0.7324
+Epoch 91/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3421 - categorical_accuracy: 0.8710 - val_loss: 2.5784 - val_categorical_accuracy: 0.7258
+Epoch 92/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3294 - categorical_accuracy: 0.8769 - val_loss: 2.6806 - val_categorical_accuracy: 0.7291
+Epoch 93/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3300 - categorical_accuracy: 0.8802 - val_loss: 2.6555 - val_categorical_accuracy: 0.7291
+Epoch 94/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3297 - categorical_accuracy: 0.8836 - val_loss: 2.6393 - val_categorical_accuracy: 0.7224
+Epoch 95/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3247 - categorical_accuracy: 0.8819 - val_loss: 2.6831 - val_categorical_accuracy: 0.7258
+Epoch 96/100
+38/38 [==============================] - 0s 7ms/step - loss: 0.3207 - categorical_accuracy: 0.8827 - val_loss: 2.6151 - val_categorical_accuracy: 0.7358
+Epoch 97/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3111 - categorical_accuracy: 0.8844 - val_loss: 2.7279 - val_categorical_accuracy: 0.7358
+Epoch 98/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.2767 - categorical_accuracy: 0.9112 - val_loss: 2.7553 - val_categorical_accuracy: 0.7258
+Epoch 99/100
+38/38 [==============================] - 0s 6ms/step - loss: 0.3468 - categorical_accuracy: 0.8744 - val_loss: 2.7666 - val_categorical_accuracy: 0.7358
+Epoch 100/100
+38/38 [==============================] - 0s 5ms/step - loss: 0.3242 - categorical_accuracy: 0.8827 - val_loss: 2.8050 - val_categorical_accuracy: 0.7324
+CPU times: user 28.1 s, sys: 8.11 s, total: 36.2 s
+Wall time: 23.8 s</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>my_ANN.accuracy_plot()</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>my_ANN.loss_plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="JasmineKobayashi_NN_Exam_2023_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="JasmineKobayashi_NN_Exam_2023_files/figure-html/cell-23-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>my_ANN.test_model(verbose<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>10/10 [==============================] - 0s 2ms/step
+10/10 [==============================] - 0s 5ms/step - loss: 2.8050 - categorical_accuracy: 0.7324
+
+Model Loss from testing:
+2.8049509525299072
+
+Model Accuracy from testing:
+0.7324414849281311
+
+Preview of model prediction (raw):
+[[1.3068883e-01 2.6154242e-02 8.4315693e-01]
+ [9.9999535e-01 4.8913279e-07 4.1498365e-06]
+ [2.1179220e-04 9.9977952e-01 8.6966475e-06]
+ [8.5237242e-02 6.8804914e-01 2.2671355e-01]
+ [1.0000000e+00 0.0000000e+00 0.0000000e+00]]
+
+Preview of predictions labeled:
+[['science']
+ ['football']
+ ['politics']
+ ['politics']
+ ['football']]</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>my_ANN.pretty_confusion_matrix()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="JasmineKobayashi_NN_Exam_2023_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
+</div>
 </section>
 <section id="cnn" class="level1">
 <h1>CNN</h1>
