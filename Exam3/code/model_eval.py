@@ -37,11 +37,9 @@ class exam_model_eval:
         self.X_train = X_train
         self.X_test = X_test
         self.y_train = y_train
-        self.labeled_y_train = self.OHE.inverse_transform(self.y_train)
+        self.labeled_y_train = self.OHE.inverse_transform(self.y_train) #likely not needed, but potentially useful
         self.y_test = y_test
         self.labeled_y_test = self.OHE.inverse_transform(self.y_test)
-        
-        
 
         # print model summary
         print(self.NN_model.summary())
@@ -59,7 +57,6 @@ class exam_model_eval:
         print("Accuracy Metric =",str(metrics))
         print("Optimizer =",str(optimizer))
         
-        
 
     def train_model(self,epochs = 10):
         self.hist = self.NN_model.fit(self.X_train,
@@ -74,7 +71,7 @@ class exam_model_eval:
         plt.plot(self.hist.history['val_categorical_accuracy'], label = 'val_accuracy')
         plt.xlabel('Epoch')
         plt.ylabel('Accuracy')
-        plt.title(title)
+        plt.title(title+" for {}".format(self.model_name))
 
         #plt.ylim([0.5, 1])
         plt.legend(loc='lower right')
@@ -87,7 +84,38 @@ class exam_model_eval:
         plt.plot(self.hist.history['val_loss'], label = 'val_loss')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
-        plt.title(title)
+        plt.title(title+" for {} ".format(self.model_name))
         #plt.ylim([0.5, 1])
         plt.legend(loc='lower right')
-    
+
+    def test_model(self,verbose=True):
+        self.prediction = self.NN_model.predict(self.X_test)
+        self.labeled_prediction = self.OHE.inverse_transform(self.prediction)
+        self.eval_loss,self.eval_acc = self.NN_model.evaluate(self.X_test,self.y_test)
+        
+        if verbose:
+            print("\nModel Loss from testing:")
+            print(self.eval_loss)
+
+            print("\nModel Accuracy from testing:")
+            print(self.eval_acc)
+
+            print("\nPreview of model prediction (raw):")
+            print(self.prediction[:5])
+
+            print("\nPreview of predictions labeled:")
+            print(self.labeled_prediction[:5])
+
+    def pretty_confusion_matrix(self,
+                                title='Confusion Matrix'):
+
+        cm = confusion_matrix(self.labeled_prediction,self.labeled_y_test)
+        
+        fig, ax = plt.subplots(figsize=(10,8)) 
+        sns.heatmap(cm, annot=True, fmt='g', ax=ax, annot_kws={'size': 18})
+        ax.set_xlabel('True labels') 
+        ax.set_ylabel('Predicted labels')
+        ax.xaxis.set_ticklabels(self.OHE.categories_[0].tolist())
+        ax.yaxis.set_ticklabels(self.OHE.categories_[0].tolist())
+        ax.set_title(title+" of {} Prediction Performance".format(self.model_name)) 
+        plt.show()
